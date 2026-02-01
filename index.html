@@ -3,596 +3,454 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>StudyEngine Ultra | Focus Mode</title>
-    
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
-    
-    <script src="https://cdn.tailwindcss.com"></script>
-    <script>
-        tailwind.config = {
-            darkMode: 'class',
-            theme: {
-                extend: {
-                    fontFamily: {
-                        sans: ['Inter', 'sans-serif'],
-                        mono: ['"JetBrains Mono"', 'monospace'],
-                    },
-                    colors: {
-                        brand: {
-                            50: '#f0fdf4',
-                            100: '#dcfce7',
-                            500: '#22c55e', // Success Green
-                            600: '#16a34a',
-                        },
-                        accent: {
-                            500: '#6366f1', // Indigo Focus
-                            600: '#4f46e5',
-                        },
-                        surface: {
-                            light: '#ffffff',
-                            dark: '#0f172a', // Slate 900
-                            card: '#1e293b', // Slate 800
-                        }
-                    },
-                    animation: {
-                        'shake': 'shake 0.5s cubic-bezier(.36,.07,.19,.97) both',
-                        'fade-in': 'fadeIn 0.3s ease-out forwards',
-                    },
-                    keyframes: {
-                        shake: {
-                            '10%, 90%': { transform: 'translate3d(-1px, 0, 0)' },
-                            '20%, 80%': { transform: 'translate3d(2px, 0, 0)' },
-                            '30%, 50%, 70%': { transform: 'translate3d(-4px, 0, 0)' },
-                            '40%, 60%': { transform: 'translate3d(4px, 0, 0)' }
-                        },
-                        fadeIn: {
-                            '0%': { opacity: '0', transform: 'translateY(10px)' },
-                            '100%': { opacity: '1', transform: 'translateY(0)' }
-                        }
-                    }
-                }
-            }
-        }
-    </script>
+    <title>StudyEngine Ultra | Manager Edition</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@500&display=swap" rel="stylesheet">
     <style>
-        /* Base Reset */
-        body {
-            -webkit-font-smoothing: antialiased;
-            -moz-osx-font-smoothing: grayscale;
-            transition: background-color 0.3s ease, color 0.3s ease;
+        :root {
+            --primary: #6366f1;
+            --primary-hover: #4f46e5;
+            --bg: #f8fafc;
+            --surface: #ffffff;
+            --text: #0f172a;
+            --text-sub: #64748b;
+            --border: #e2e8f0;
+            --success: #10b981;
+            --success-bg: #ecfdf5;
+            --error: #ef4444;
+            --error-bg: #fef2f2;
+            --radius: 16px;
+            --shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.05), 0 4px 6px -2px rgba(0, 0, 0, 0.025);
         }
 
-        /* Input Zoom Fix for iOS (No meta viewport hack needed) */
-        input, textarea, select { font-size: 16px !important; }
+        .dark {
+            --primary: #818cf8;
+            --primary-hover: #6366f1;
+            --bg: #0f172a;
+            --surface: #1e293b;
+            --text: #f1f5f9;
+            --text-sub: #94a3b8;
+            --border: #334155;
+            --success: #34d399;
+            --success-bg: #064e3b;
+            --error: #f87171;
+            --error-bg: #450a0a;
+            --shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.5);
+        }
 
+        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Inter', sans-serif; transition: background-color 0.2s, border-color 0.2s, color 0.2s; }
+        
+        body { background-color: var(--bg); color: var(--text); display: flex; flex-direction: column; align-items: center; justify-content: center; min-height: 100vh; padding: 20px; }
+        
+        /* --- LAYOUT --- */
+        .container { width: 100%; max-width: 650px; position: relative; }
+        .card { background: var(--surface); border-radius: var(--radius); padding: 32px; box-shadow: var(--shadow); border: 1px solid var(--border); overflow: hidden; }
+
+        /* --- HEADER --- */
+        header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 24px; }
+        .brand { font-size: 1.25rem; font-weight: 800; display: flex; align-items: center; gap: 8px; letter-spacing: -0.02em; }
+        .brand span { color: var(--primary); }
+        .icon-btn { background: transparent; border: 1px solid var(--border); color: var(--text); width: 40px; height: 40px; border-radius: 12px; cursor: pointer; display: flex; align-items: center; justify-content: center; font-size: 1.1rem; transition: 0.2s; }
+        .icon-btn:hover { background: var(--border); }
+
+        /* --- INPUTS --- */
+        label { display: block; font-size: 0.7rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.05em; color: var(--text-sub); margin-bottom: 8px; }
+        textarea { width: 100%; height: 160px; background: var(--bg); border: 1px solid var(--border); border-radius: 12px; padding: 16px; color: var(--text); font-family: 'JetBrains Mono', monospace; font-size: 0.8rem; resize: none; outline: none; margin-bottom: 24px; line-height: 1.5; }
+        textarea:focus { border-color: var(--primary); ring: 2px solid var(--primary); }
+        
+        .row { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-bottom: 24px; }
+        input[type="number"] { width: 100%; padding: 14px; background: var(--bg); border: 1px solid var(--border); border-radius: 12px; color: var(--text); font-weight: 600; outline: none; }
+        
+        /* --- BUTTONS --- */
+        .btn { width: 100%; padding: 14px; border-radius: 12px; font-weight: 600; cursor: pointer; border: none; font-size: 0.9rem; display: flex; align-items: center; justify-content: center; gap: 8px; }
+        .btn:active { transform: scale(0.98); }
+        .btn-primary { background: var(--text); color: var(--bg); }
+        .btn-outline { background: transparent; border: 1px solid var(--border); color: var(--text); }
+        .btn-outline:hover { background: var(--bg); }
+        
+        .review-group { display: flex; gap: 8px; }
+        .btn-review { flex: 1; background: var(--primary); color: white; opacity: 0.5; cursor: not-allowed; }
+        .btn-review.active { opacity: 1; cursor: pointer; }
+        .btn-settings { width: 48px; background: var(--bg); border: 1px solid var(--border); color: var(--text-sub); cursor: pointer; border-radius: 12px; font-size: 1.1rem; }
+        .btn-settings:hover { color: var(--text); border-color: var(--text); }
+
+        /* --- QUIZ & RESULTS --- */
+        .hidden { display: none !important; }
+        .progress { height: 6px; background: var(--border); border-radius: 3px; overflow: hidden; margin-bottom: 24px; }
+        .fill { height: 100%; background: var(--primary); width: 0%; transition: width 0.3s ease; }
+        
+        .meta { display: flex; justify-content: space-between; font-size: 0.8rem; font-weight: 600; color: var(--text-sub); margin-bottom: 12px; }
+        .q-text { font-size: 1.2rem; font-weight: 700; line-height: 1.4; margin-bottom: 24px; }
+
+        .options { display: grid; gap: 12px; }
+        .opt { text-align: left; padding: 16px; border-radius: 12px; background: var(--bg); border: 2px solid transparent; color: var(--text); cursor: pointer; font-weight: 500; transition: 0.2s; }
+        .opt:hover { border-color: var(--primary); }
+        .opt.correct { background: var(--success-bg); border-color: var(--success); color: var(--success); font-weight: 700; }
+        .opt.wrong { background: var(--error-bg); border-color: var(--error); color: var(--error); animation: shake 0.4s; }
+
+        .feedback { margin-top: 24px; padding: 20px; background: var(--bg); border-radius: 12px; border-left: 4px solid var(--primary); animation: slideUp 0.3s; }
+        .keep-toggle { display: flex; align-items: center; gap: 10px; margin-top: 16px; font-size: 0.85rem; font-weight: 600; color: var(--text-sub); cursor: pointer; }
+        
+        .stat-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin: 32px 0; }
+        .stat-card { background: var(--bg); padding: 20px; border-radius: 16px; text-align: center; }
+        .stat-val { font-size: 2rem; font-weight: 800; color: var(--text); }
+        .stat-lbl { font-size: 0.7rem; font-weight: 700; text-transform: uppercase; color: var(--text-sub); margin-top: 4px; }
+
+        /* --- MANAGER VIEW --- */
+        .manager-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; border-bottom: 1px solid var(--border); padding-bottom: 15px; }
+        .list-container { max-height: 300px; overflow-y: auto; display: grid; gap: 8px; margin-bottom: 20px; padding-right: 5px; }
+        
         /* Custom Scrollbar */
-        ::-webkit-scrollbar { width: 6px; }
-        ::-webkit-scrollbar-track { background: transparent; }
-        ::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 3px; }
-        .dark ::-webkit-scrollbar-thumb { background: #475569; }
+        .list-container::-webkit-scrollbar { width: 6px; }
+        .list-container::-webkit-scrollbar-thumb { background: var(--border); border-radius: 3px; }
 
-        /* Utility */
-        .glass-panel {
-            background: rgba(255, 255, 255, 0.95);
-            backdrop-filter: blur(8px);
-            border: 1px solid rgba(226, 232, 240, 0.8);
-            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
-        }
-        .dark .glass-panel {
-            background: rgba(30, 41, 59, 0.95);
-            border: 1px solid rgba(51, 65, 85, 0.5);
-            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.3);
-        }
+        .list-item { display: flex; align-items: start; gap: 12px; padding: 12px; background: var(--bg); border-radius: 8px; border: 1px solid var(--border); transition: 0.2s; }
+        .list-item:hover { border-color: var(--primary); }
+        .list-item input { width: 18px; height: 18px; margin-top: 3px; cursor: pointer; accent-color: var(--primary); }
+        .item-text { font-size: 0.85rem; font-weight: 500; line-height: 1.4; color: var(--text); flex: 1; }
+        .item-streak { font-size: 0.7rem; font-weight: 700; background: var(--surface); padding: 2px 6px; border-radius: 4px; color: var(--text-sub); border: 1px solid var(--border); }
 
-        /* Sticky Footer for Mobile Next Button */
-        .sticky-footer {
-            position: sticky;
-            bottom: 0;
-            background: linear-gradient(to top, var(--bg-color) 80%, transparent);
-            padding-top: 20px;
-            padding-bottom: 20px;
-            margin-top: 20px;
-            z-index: 10;
-        }
+        .manager-actions { display: flex; justify-content: space-between; align-items: center; gap: 12px; border-top: 1px solid var(--border); pt-4; }
+        .text-btn { background: none; border: none; font-size: 0.8rem; font-weight: 700; color: var(--text-sub); cursor: pointer; }
+        .text-btn:hover { color: var(--primary); }
+        .btn-danger { background: var(--error-bg); color: var(--error); border: 1px solid var(--error); width: auto; padding: 10px 20px; }
+        .btn-danger:hover { background: var(--error); color: white; }
+
+        @keyframes shake { 0%, 100% { transform: translateX(0); } 25% { transform: translateX(-4px); } 75% { transform: translateX(4px); } }
+        @keyframes slideUp { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
     </style>
 </head>
-<body class="bg-slate-50 text-slate-900 dark:bg-surface-dark dark:text-slate-100 min-h-screen flex flex-col items-center justify-center p-4 md:p-6" style="--bg-color: #f8fafc;">
+<body>
 
-    <div class="fixed inset-0 overflow-hidden pointer-events-none -z-10">
-        <div class="absolute top-0 left-1/4 w-[500px] h-[500px] bg-accent-500/10 rounded-full blur-[100px]"></div>
-        <div class="absolute bottom-0 right-1/4 w-[500px] h-[500px] bg-brand-500/10 rounded-full blur-[100px]"></div>
-    </div>
+    <div class="container">
+        <header>
+            <div class="brand"><span>⚡</span> StudyEngine</div>
+            <button class="icon-btn" onclick="toggleTheme()">🌓</button>
+        </header>
 
-    <header class="w-full max-w-2xl flex justify-between items-center mb-6 relative z-20">
-        <div class="flex items-center gap-3">
-            <div class="w-8 h-8 rounded-lg bg-accent-600 flex items-center justify-center text-white font-bold shadow-lg shadow-accent-500/30">
-                S
-            </div>
-            <h1 class="text-lg font-bold tracking-tight text-slate-700 dark:text-slate-200">StudyEngine</h1>
-        </div>
-        
-        <div class="flex items-center gap-2 bg-white dark:bg-slate-800 p-1.5 rounded-full border border-slate-200 dark:border-slate-700 shadow-sm">
-            <div id="streak-badge" class="hidden px-3 py-1 bg-orange-50 dark:bg-orange-900/20 text-orange-600 dark:text-orange-400 rounded-full text-xs font-bold items-center gap-1 transition-all">
-                🔥 <span id="streak-count">0</span>
-            </div>
+        <main id="view-setup" class="card">
+            <h2 style="margin-bottom: 20px; font-weight: 700;">Setup Session</h2>
             
-            <div class="w-px h-4 bg-slate-200 dark:bg-slate-700 mx-1"></div>
-
-            <button id="theme-toggle" class="p-1.5 rounded-full hover:bg-slate-100 dark:hover:bg-slate-700 text-slate-500 transition-colors" aria-label="Toggle Dark Mode">
-                <svg id="icon-sun" class="w-4 h-4 hidden" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z"></path></svg>
-                <svg id="icon-moon" class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.354 24.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z"></path></svg>
-            </button>
-        </div>
-    </header>
-
-    <div class="w-full max-w-2xl relative z-10 transition-all duration-300">
-
-        <main id="view-setup" class="glass-panel rounded-2xl p-6 md:p-8 animate-fade-in">
-            <div class="flex justify-between items-end mb-6">
+            <label>Question Source</label>
+            <textarea id="json-input" placeholder='Paste JSON array here...'></textarea>
+            
+            <div class="row">
                 <div>
-                    <h2 class="text-xl font-bold text-slate-800 dark:text-white">Session Setup</h2>
-                    <p class="text-sm text-slate-500 dark:text-slate-400 mt-1">Configure your learning material</p>
+                    <label>Questions <span id="count-badge" style="float: right; color: var(--primary);"></span></label>
+                    <input type="number" id="q-limit" value="10" min="1">
                 </div>
-                <button onclick="toggleModal(true)" class="text-xs font-medium text-accent-600 dark:text-accent-400 bg-accent-50 dark:bg-accent-900/20 px-3 py-1.5 rounded-lg hover:bg-accent-100 transition-colors flex items-center gap-1.5">
-                    <svg class="w-3 h-3" fill="currentColor" viewBox="0 0 24 24"><path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"/></svg>
-                    AI Generator
-                </button>
-            </div>
-
-            <div class="relative group mb-4">
-                <textarea id="json-input" class="w-full h-48 p-4 rounded-xl bg-slate-100 dark:bg-slate-900/50 border border-slate-200 dark:border-slate-700 focus:ring-2 focus:ring-accent-500 focus:outline-none font-mono text-xs leading-relaxed resize-none text-slate-600 dark:text-slate-300 transition-shadow" placeholder="// Paste JSON here or use the AI Generator..."></textarea>
-                <div id="input-status" class="absolute bottom-4 right-4 text-[10px] font-bold text-slate-400 uppercase tracking-wider bg-white dark:bg-slate-800 px-2 py-1 rounded border border-slate-200 dark:border-slate-700 shadow-sm">
-                    Empty
-                </div>
-            </div>
-
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
                 <div>
-                    <label class="block text-xs font-semibold text-slate-500 mb-1.5 uppercase">Question Count</label>
-                    <div class="relative">
-                        <input type="number" id="q-limit" class="w-full p-3 pl-4 rounded-xl bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 focus:border-accent-500 outline-none font-semibold text-sm transition-colors" min="1" value="10">
-                        <span class="absolute right-4 top-3 text-xs text-slate-400">Questions</span>
+                    <label>Review List</label>
+                    <div class="review-group">
+                        <button id="btn-review" class="btn btn-review" disabled onclick="startQuiz(true)">Empty</button>
+                        <button class="btn-settings" onclick="openManager()" title="Manage Review List">⚙️</button>
                     </div>
                 </div>
-                
-                <div class="flex items-end">
-                    <button id="btn-mistakes" onclick="startQuiz(true)" disabled class="w-full p-3 rounded-xl bg-white dark:bg-slate-800 border border-dashed border-slate-300 dark:border-slate-600 text-slate-400 font-medium text-sm flex justify-center items-center gap-2 transition-all disabled:opacity-50 disabled:cursor-not-allowed hover:border-orange-400 hover:text-orange-500 hover:bg-orange-50 dark:hover:bg-orange-900/10">
-                        <span>↺</span> No Mistakes Saved
-                    </button>
-                </div>
             </div>
 
-            <div class="flex gap-3">
-                <button onclick="loadSampleData()" class="px-4 py-3 rounded-xl border border-slate-200 dark:border-slate-700 text-slate-500 dark:text-slate-400 text-sm font-semibold hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors">
-                    Load Sample
-                </button>
-                <button onclick="startQuiz()" class="flex-1 bg-slate-900 dark:bg-white text-white dark:text-slate-900 font-bold py-3 rounded-xl hover:shadow-lg hover:shadow-slate-500/20 transition-all transform active:scale-[0.98]">
-                    Start Session
-                </button>
+            <div class="row" style="margin-bottom: 0;">
+                <button class="btn btn-outline" onclick="document.getElementById('file-up').click()">📂 Browse File</button>
+                <input type="file" id="file-up" accept=".json" class="hidden" onchange="handleFile(event)">
+                <button class="btn btn-primary" onclick="startQuiz(false)">Start Session</button>
             </div>
         </main>
 
-        <main id="view-quiz" class="hidden glass-panel rounded-2xl overflow-hidden shadow-xl animate-fade-in flex flex-col">
-            <div class="w-full h-1 bg-slate-100 dark:bg-slate-800">
-                <div id="progress-bar" class="h-full bg-accent-600 transition-all duration-500 ease-out" style="width: 0%"></div>
+        <main id="view-manager" class="card hidden">
+            <div class="manager-header">
+                <h3 style="font-weight: 700;">Manage Review List</h3>
+                <button class="text-btn" onclick="closeManager()">✕ Close</button>
             </div>
 
-            <div class="p-6 md:p-8 flex-1 flex flex-col">
-                <div class="flex justify-between items-center mb-6 text-xs font-mono text-slate-400">
-                    <span id="question-tracker">01 / 10</span>
-                    <span id="timer" class="bg-slate-100 dark:bg-slate-800 px-2 py-1 rounded">00:00</span>
-                </div>
+            <div class="list-actions" style="margin-bottom: 12px; display: flex; justify-content: space-between;">
+                <label style="display: flex; align-items: center; gap: 8px; cursor: pointer; margin: 0;">
+                    <input type="checkbox" id="select-all" onchange="toggleSelectAll()"> Select All
+                </label>
+                <span id="selected-count" style="font-size: 0.8rem; font-weight: 600; color: var(--text-sub);">0 Selected</span>
+            </div>
 
-                <h2 id="question-text" class="text-lg md:text-xl font-bold leading-relaxed text-slate-800 dark:text-slate-100 mb-8"></h2>
+            <div id="review-list-container" class="list-container">
+                <div style="text-align: center; padding: 40px; color: var(--text-sub); font-size: 0.9rem;">Review list is empty.</div>
+            </div>
 
-                <div id="options-grid" class="grid gap-3 mb-6"></div>
-
-                <div id="feedback-area" class="hidden bg-slate-50 dark:bg-slate-800/50 rounded-lg p-4 border-l-4 border-accent-500 animate-fade-in">
-                    <p class="text-sm text-slate-700 dark:text-slate-300 leading-relaxed mb-2"><strong class="text-slate-900 dark:text-white">Note:</strong> <span id="feedback-note"></span></p>
-                    <p id="feedback-source" class="text-xs text-slate-400 font-mono italic"></p>
-                </div>
-
-                <div id="footer-actions" class="sticky-footer hidden">
-                    <button onclick="nextQuestion()" class="w-full bg-accent-600 hover:bg-accent-700 text-white font-bold py-3.5 rounded-xl shadow-lg shadow-accent-500/20 transition-all flex items-center justify-center gap-2 active:scale-[0.98]">
-                        Next Question <span class="text-lg">→</span>
-                    </button>
-                </div>
+            <div style="display: flex; gap: 10px;">
+                <button class="btn btn-outline" onclick="closeManager()">Cancel</button>
+                <button class="btn btn-danger" onclick="deleteSelected()">Delete Selected</button>
             </div>
         </main>
 
-        <main id="view-results" class="hidden glass-panel rounded-2xl p-8 text-center animate-fade-in">
-            <div class="inline-flex items-center justify-center w-16 h-16 rounded-full bg-green-100 dark:bg-green-900/30 text-green-600 dark:text-green-400 mb-4 text-3xl">
-                🏆
+        <main id="view-quiz" class="card hidden">
+            <div class="progress"><div id="progress-bar" class="fill"></div></div>
+            <div class="meta">
+                <span id="tracker">0 / 0</span>
+                <span id="timer">00:00</span>
             </div>
             
-            <h2 class="text-2xl font-bold mb-2 dark:text-white">Session Complete</h2>
-            <p class="text-slate-500 text-sm mb-8">Review your performance below.</p>
+            <div id="q-text" class="q-text">Loading...</div>
+            <div id="options" class="options"></div>
 
-            <div class="grid grid-cols-3 gap-3 mb-8">
-                <div class="p-4 bg-slate-50 dark:bg-slate-800 rounded-xl border border-slate-100 dark:border-slate-700">
-                    <div class="text-[10px] uppercase text-slate-400 font-bold tracking-wider mb-1">Score</div>
-                    <div id="res-score" class="text-xl font-bold text-slate-800 dark:text-slate-100">0%</div>
-                </div>
-                <div class="p-4 bg-slate-50 dark:bg-slate-800 rounded-xl border border-slate-100 dark:border-slate-700">
-                    <div class="text-[10px] uppercase text-slate-400 font-bold tracking-wider mb-1">Time</div>
-                    <div id="res-time" class="text-xl font-bold text-slate-800 dark:text-slate-100">0:00</div>
-                </div>
-                <div class="p-4 bg-slate-50 dark:bg-slate-800 rounded-xl border border-slate-100 dark:border-slate-700">
-                    <div class="text-[10px] uppercase text-slate-400 font-bold tracking-wider mb-1">Streak</div>
-                    <div id="res-streak" class="text-xl font-bold text-orange-500">0</div>
-                </div>
-            </div>
-
-            <div class="space-y-3">
-                <button onclick="downloadCSV()" class="w-full py-3 rounded-xl border border-slate-200 dark:border-slate-700 font-semibold text-slate-600 dark:text-slate-300 text-sm hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors">
-                    Download Report (CSV)
-                </button>
-                <button onclick="location.reload()" class="w-full bg-slate-900 dark:bg-white text-white dark:text-slate-900 font-bold py-3.5 rounded-xl hover:shadow-lg transition-all">
-                    Start New Session
-                </button>
+            <div id="feedback" class="feedback hidden">
+                <div style="font-size: 0.7rem; font-weight: 800; color: var(--primary); margin-bottom: 8px;">EXPLANATION</div>
+                <p id="note" style="font-size: 0.9rem; line-height: 1.6;"></p>
+                
+                <label class="keep-toggle">
+                    <input type="checkbox" id="keep-check">
+                    Keep in Review List anyway
+                </label>
+                
+                <button class="btn btn-primary" style="margin-top: 20px;" onclick="nextQ()">Next Question →</button>
             </div>
         </main>
 
-    </div>
+        <main id="view-results" class="card hidden" style="text-align: center;">
+            <div style="font-size: 4rem; margin-bottom: 16px;">🏆</div>
+            <h2 style="margin-bottom: 8px;">Session Complete</h2>
+            <p style="color: var(--text-sub); font-size: 0.9rem;">Great job! Here is your performance.</p>
 
-    <div id="ai-modal" class="fixed inset-0 z-50 hidden" aria-labelledby="modal-title" role="dialog" aria-modal="true">
-        <div class="absolute inset-0 bg-slate-900/60 backdrop-blur-sm transition-opacity" onclick="toggleModal(false)"></div>
-        
-        <div class="relative min-h-screen md:min-h-0 md:h-auto w-full md:w-[500px] bg-white dark:bg-slate-800 md:rounded-2xl shadow-2xl md:my-10 md:mx-auto p-6 flex flex-col transform transition-all">
-            <div class="flex justify-between items-center mb-6">
-                <h3 class="text-lg font-bold dark:text-white">AI Prompt Builder</h3>
-                <button onclick="toggleModal(false)" class="p-2 text-slate-400 hover:text-slate-600 dark:hover:text-slate-200">&times;</button>
+            <div class="stat-grid">
+                <div class="stat-card">
+                    <div class="stat-val" id="res-score">0%</div>
+                    <div class="stat-lbl">Score</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-val" id="res-streak">0</div>
+                    <div class="stat-lbl">Streak</div>
+                </div>
             </div>
-
-            <div class="flex p-1 bg-slate-100 dark:bg-slate-900 rounded-lg mb-4">
-                <button onclick="setPromptMode('convert')" id="tab-convert" class="flex-1 py-1.5 text-xs font-bold rounded shadow bg-white dark:bg-slate-700 text-slate-800 dark:text-white transition-all">Convert Data</button>
-                <button onclick="setPromptMode('create')" id="tab-create" class="flex-1 py-1.5 text-xs font-bold rounded text-slate-500 hover:text-slate-700 transition-all">Create New</button>
-            </div>
-
-            <div class="relative flex-1 mb-4">
-                <textarea id="prompt-output" readonly class="w-full h-40 md:h-32 p-3 text-xs bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-700 rounded-lg font-mono text-slate-600 dark:text-slate-400 focus:outline-none resize-none" onclick="this.select()"></textarea>
-                <div class="absolute top-2 right-2 px-1.5 py-0.5 bg-slate-200 dark:bg-slate-800 text-[10px] font-bold rounded text-slate-500">READ ONLY</div>
-            </div>
-
-            <button onclick="copyPrompt()" class="w-full bg-accent-600 hover:bg-accent-700 text-white font-bold py-3 rounded-xl transition-colors">
-                Copy to Clipboard
-            </button>
-        </div>
+            
+            <button class="btn btn-primary" onclick="location.reload()">Return Home</button>
+        </main>
     </div>
 
     <script>
-        /**
-         * StudyEngine Ultra v2.0 - Optimized for Focus & Mobile
-         */
+        const DB_KEY = 'study_ultra_v7';
+        let state = { pool: [], idx: 0, score: 0, timer: 0, interval: null, log: [] };
 
-        // --- STATE MANAGEMENT ---
-        const state = {
-            questions: [],
-            pool: [],
-            idx: 0,
-            score: 0,
-            streak: 0,
-            timer: 0,
-            interval: null,
-            log: [],
-            mistakesKey: 'studyengine_mistakes_v2'
-        };
-
-        const dom = {
-            views: { setup: document.getElementById('view-setup'), quiz: document.getElementById('view-quiz'), results: document.getElementById('view-results') },
-            input: document.getElementById('json-input'),
-            status: document.getElementById('input-status'),
-            qLimit: document.getElementById('q-limit'),
-            mistakesBtn: document.getElementById('btn-mistakes'),
-            streakBadge: document.getElementById('streak-badge'),
-            streakCount: document.getElementById('streak-count'),
-            themeToggle: document.getElementById('theme-toggle'),
-            footer: document.getElementById('footer-actions')
-        };
-
-        const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-
-        // --- THEME & INIT ---
-        function initTheme() {
-            const isDark = localStorage.getItem('theme') === 'dark' || (!localStorage.getItem('theme') && window.matchMedia('(prefers-color-scheme: dark)').matches);
-            document.documentElement.classList.toggle('dark', isDark);
-            updateThemeIcon(isDark);
-            updateBgColor(isDark);
-        }
-        
+        // --- THEME ---
+        if (localStorage.getItem('theme') === 'dark') document.body.classList.add('dark');
         function toggleTheme() {
-            const isDark = document.documentElement.classList.toggle('dark');
+            const isDark = document.body.classList.toggle('dark');
             localStorage.setItem('theme', isDark ? 'dark' : 'light');
-            updateThemeIcon(isDark);
-            updateBgColor(isDark);
         }
 
-        function updateThemeIcon(isDark) {
-            document.getElementById('icon-sun').classList.toggle('hidden', !isDark);
-            document.getElementById('icon-moon').classList.toggle('hidden', isDark);
+        // --- DATA INPUT ---
+        document.getElementById('json-input').addEventListener('input', updateCount);
+        
+        function handleFile(e) {
+            const file = e.target.files[0];
+            if(!file) return;
+            const reader = new FileReader();
+            reader.onload = (ev) => {
+                document.getElementById('json-input').value = ev.target.result;
+                updateCount();
+            };
+            reader.readAsText(file);
         }
 
-        function updateBgColor(isDark) {
-            document.body.style.setProperty('--bg-color', isDark ? '#0f172a' : '#f8fafc');
+        function updateCount() {
+            try {
+                const data = JSON.parse(document.getElementById('json-input').value);
+                const count = Array.isArray(data) ? data.length : 0;
+                const limit = document.getElementById('q-limit');
+                const badge = document.getElementById('count-badge');
+                
+                if (count > 0) {
+                    badge.innerText = `Total: ${count}`;
+                    limit.max = count;
+                    limit.value = count;
+                } else {
+                    badge.innerText = '';
+                }
+            } catch {
+                document.getElementById('count-badge').innerText = '';
+            }
         }
 
-        dom.themeToggle.addEventListener('click', toggleTheme);
-        initTheme();
-        checkMistakes();
+        // --- MANAGER LOGIC ---
+        function getDB() { return JSON.parse(localStorage.getItem(DB_KEY) || '[]'); }
+        function setDB(data) { localStorage.setItem(DB_KEY, JSON.stringify(data)); updateReviewBtn(); }
 
-        // --- INPUT HANDLING ---
-        dom.input.addEventListener('input', () => {
-            const txt = dom.input.value.trim();
-            if (!txt) {
-                setStatus('Empty', 'neutral');
+        function updateReviewBtn() {
+            const db = getDB();
+            const btn = document.getElementById('btn-review');
+            if (db.length > 0) {
+                btn.innerText = `Practice Review (${db.length})`;
+                btn.classList.add('active');
+                btn.disabled = false;
+            } else {
+                btn.innerText = "Review List Empty";
+                btn.classList.remove('active');
+                btn.disabled = true;
+            }
+        }
+
+        function openManager() {
+            document.getElementById('view-setup').classList.add('hidden');
+            document.getElementById('view-manager').classList.remove('hidden');
+            renderManagerList();
+        }
+
+        function closeManager() {
+            document.getElementById('view-manager').classList.add('hidden');
+            document.getElementById('view-setup').classList.remove('hidden');
+        }
+
+        function renderManagerList() {
+            const db = getDB();
+            const container = document.getElementById('review-list-container');
+            container.innerHTML = '';
+
+            if (db.length === 0) {
+                container.innerHTML = `<div style="text-align:center; padding:30px; color:var(--text-sub)">No questions to manage.</div>`;
                 return;
             }
-            try {
-                const data = JSON.parse(txt);
-                if (Array.isArray(data)) {
-                    setStatus(`Ready (${data.length} Qs)`, 'success');
-                    dom.qLimit.max = data.length;
-                    dom.qLimit.value = Math.min(data.length, 20);
-                } else {
-                    setStatus('Not an Array', 'error');
-                }
-            } catch (e) {
-                setStatus('Invalid JSON', 'error');
-            }
-        });
 
-        function setStatus(msg, type) {
-            dom.status.innerText = msg;
-            const colors = {
-                neutral: 'text-slate-400 border-slate-200 bg-white',
-                success: 'text-green-600 border-green-200 bg-green-50',
-                error: 'text-red-500 border-red-200 bg-red-50'
-            };
-            dom.status.className = `absolute bottom-4 right-4 text-[10px] font-bold uppercase tracking-wider px-2 py-1 rounded border shadow-sm ${colors[type]}`;
+            db.forEach((item, index) => {
+                const div = document.createElement('div');
+                div.className = 'list-item';
+                div.innerHTML = `
+                    <input type="checkbox" class="del-check" data-idx="${index}" onchange="updateSelCount()">
+                    <div class="item-text">${item.question}</div>
+                    <div class="item-streak">🔥 ${item.streak || 0}</div>
+                `;
+                container.appendChild(div);
+            });
+            updateSelCount();
         }
 
-        function loadSampleData() {
-            const sample = [
-                { "question": "What is the primary visual principle used to guide the user's eye?", "options": ["Hierarchy", "Saturation", "Kerning", "Leading"], "answer": "Hierarchy", "note": "Visual hierarchy organizes elements by importance.", "source": "UX Foundations" },
-                { "question": "Which CSS unit is relative to the viewport width?", "options": ["vw", "rem", "em", "%"], "answer": "vw", "note": "1vw = 1% of the viewport width.", "source": "MDN" }
-            ];
-            dom.input.value = JSON.stringify(sample, null, 2);
-            dom.input.dispatchEvent(new Event('input'));
+        function toggleSelectAll() {
+            const master = document.getElementById('select-all').checked;
+            document.querySelectorAll('.del-check').forEach(cb => cb.checked = master);
+            updateSelCount();
         }
 
-        // --- ENGINE LOGIC ---
-        function checkMistakes() {
-            const db = JSON.parse(localStorage.getItem(state.mistakesKey) || '[]');
-            if (db.length > 0) {
-                dom.mistakesBtn.disabled = false;
-                dom.mistakesBtn.classList.remove('text-slate-400', 'border-slate-300');
-                dom.mistakesBtn.classList.add('text-orange-600', 'border-orange-300', 'bg-orange-50');
-                dom.mistakesBtn.innerHTML = `<span>↺</span> Review ${db.length} Mistake${db.length > 1 ? 's' : ''}`;
-            }
+        function updateSelCount() {
+            const count = document.querySelectorAll('.del-check:checked').length;
+            document.getElementById('selected-count').innerText = `${count} Selected`;
         }
 
-        function startQuiz(isReview = false) {
-            // Resume Audio
-            if (audioCtx.state === 'suspended') audioCtx.resume();
+        function deleteSelected() {
+            const checks = document.querySelectorAll('.del-check:checked');
+            if (checks.length === 0) return alert("No questions selected.");
+            
+            if (!confirm(`Delete ${checks.length} questions from Review List?`)) return;
 
+            const db = getDB();
+            // Get indexes to remove, sort descending to avoid shift issues
+            const indices = Array.from(checks).map(c => parseInt(c.dataset.idx)).sort((a,b) => b-a);
+            
+            indices.forEach(idx => db.splice(idx, 1));
+            setDB(db);
+            
+            renderManagerList();
+            document.getElementById('select-all').checked = false;
+        }
+
+        // --- QUIZ LOGIC ---
+        function startQuiz(isReview) {
             try {
                 if (isReview) {
-                    state.questions = JSON.parse(localStorage.getItem(state.mistakesKey) || '[]');
-                    if (!state.questions.length) return alert("No mistakes found.");
-                    // Shuffle
-                    state.questions.sort(() => Math.random() - 0.5);
+                    state.pool = getDB();
                 } else {
-                    const raw = JSON.parse(dom.input.value);
-                    if (!raw || !raw.length) return alert("Invalid Input");
-                    state.questions = raw.sort(() => Math.random() - 0.5).slice(0, parseInt(dom.qLimit.value));
+                    const txt = document.getElementById('json-input').value;
+                    if (!txt.trim()) return alert("Please enter JSON data.");
+                    const limit = parseInt(document.getElementById('q-limit').value);
+                    state.pool = JSON.parse(txt).sort(() => Math.random() - 0.5).slice(0, limit);
                 }
-            } catch (e) { return alert("Please check your JSON data."); }
+                if (!state.pool.length) throw "Empty";
+            } catch { return alert("Invalid JSON or Empty List."); }
 
-            // Reset State
-            state.pool = state.questions;
-            state.idx = 0; state.score = 0; state.streak = 0; state.timer = 0; state.log = [];
+            document.getElementById('view-setup').classList.add('hidden');
+            document.getElementById('view-quiz').classList.remove('hidden');
             
-            // Switch Views
-            dom.views.setup.classList.add('hidden');
-            dom.views.quiz.classList.remove('hidden');
-            dom.streakBadge.classList.remove('hidden');
-            dom.streakCount.innerText = "0";
-
-            // Start Timer
-            clearInterval(state.interval);
+            state.idx = 0; state.score = 0; state.timer = 0;
             state.interval = setInterval(() => {
                 state.timer++;
-                const m = Math.floor(state.timer / 60).toString().padStart(2, '0');
-                const s = (state.timer % 60).toString().padStart(2, '0');
+                const m = String(Math.floor(state.timer/60)).padStart(2,'0');
+                const s = String(state.timer%60).padStart(2,'0');
                 document.getElementById('timer').innerText = `${m}:${s}`;
             }, 1000);
-
-            renderQuestion();
-            window.scrollTo({ top: 0, behavior: 'smooth' });
+            
+            renderQ();
         }
 
-        function renderQuestion() {
+        function renderQ() {
             const q = state.pool[state.idx];
-            document.getElementById('question-tracker').innerText = `${String(state.idx + 1).padStart(2, '0')} / ${state.pool.length}`;
-            document.getElementById('progress-bar').style.width = `${(state.idx / state.pool.length) * 100}%`;
-            document.getElementById('question-text').innerText = q.question;
+            document.getElementById('tracker').innerText = `${state.idx + 1} / ${state.pool.length}`;
+            document.getElementById('progress-bar').style.width = `${(state.idx / state.pool.length)*100}%`;
+            document.getElementById('q-text').innerText = q.question;
+            document.getElementById('feedback').classList.add('hidden');
+            document.getElementById('keep-check').checked = false;
+
+            const opts = document.getElementById('options');
+            opts.innerHTML = '';
             
-            const grid = document.getElementById('options-grid');
-            grid.innerHTML = '';
-            
-            // Shuffle options
-            const opts = [...q.options].sort(() => Math.random() - 0.5);
-            
-            opts.forEach(opt => {
+            [...q.options].sort(() => Math.random() - 0.5).forEach(opt => {
                 const btn = document.createElement('button');
-                btn.className = "w-full text-left p-4 rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 hover:bg-slate-50 dark:hover:bg-slate-700 hover:border-accent-400 transition-all shadow-sm active:scale-[0.99]";
-                btn.innerHTML = `<span class="pointer-events-none font-medium text-slate-700 dark:text-slate-200 text-sm md:text-base">${opt}</span>`;
-                btn.onclick = () => handleAnswer(btn, opt, q);
-                grid.appendChild(btn);
+                btn.className = 'opt';
+                btn.innerText = opt;
+                btn.onclick = () => check(btn, opt, q);
+                opts.appendChild(btn);
             });
-
-            // Reset UI for new question
-            document.getElementById('feedback-area').classList.add('hidden');
-            dom.footer.classList.add('hidden');
         }
 
-        function handleAnswer(btn, selected, q) {
-            // Lock options
-            const allBtns = document.getElementById('options-grid').children;
-            for (let b of allBtns) b.disabled = true;
+        function check(btn, sel, q) {
+            document.querySelectorAll('.opt').forEach(b => b.disabled = true);
+            const isCorr = sel === q.answer;
+            state.log.push(isCorr);
 
-            const isCorrect = selected === q.answer;
-            state.log.push({ q: q.question, result: isCorrect, time: document.getElementById('timer').innerText });
-
-            if (isCorrect) {
-                playTone('success');
-                btn.classList.add('ring-2', 'ring-green-500', 'bg-green-50', 'dark:bg-green-900/20', 'border-green-500');
+            if (isCorr) {
+                btn.classList.add('correct');
                 state.score++;
-                state.streak++;
-                // Remove from mistakes if present
-                updateMistakeDB(q, 'remove');
             } else {
-                playTone('error');
-                btn.classList.add('ring-2', 'ring-red-500', 'bg-red-50', 'dark:bg-red-900/20', 'border-red-500', 'animate-shake');
-                state.streak = 0;
-                // Highlight correct
-                for (let b of allBtns) {
-                    if (b.innerText === q.answer) {
-                        b.classList.add('ring-2', 'ring-green-500', 'bg-green-50', 'dark:bg-green-900/20');
-                    }
-                }
-                updateMistakeDB(q, 'add');
+                btn.classList.add('wrong');
+                document.querySelectorAll('.opt').forEach(b => {
+                    if (b.innerText === q.answer) b.classList.add('correct');
+                });
             }
             
-            dom.streakCount.innerText = state.streak;
-
-            // Show Feedback
-            const feedbackArea = document.getElementById('feedback-area');
-            if (q.note || q.source) {
-                feedbackArea.classList.remove('hidden');
-                document.getElementById('feedback-note').innerText = q.note || "No explanation provided.";
-                document.getElementById('feedback-source').innerText = q.source ? `Source: ${q.source}` : "";
-            }
-
-            // Show Next Button
-            dom.footer.classList.remove('hidden');
-            
-            // Auto-scroll on mobile if needed
-            if (window.innerWidth < 768) {
-                dom.footer.scrollIntoView({ behavior: 'smooth', block: 'end' });
-            }
+            document.getElementById('note').innerText = q.note || "No notes available.";
+            document.getElementById('feedback').classList.remove('hidden');
         }
 
-        function nextQuestion() {
+        function nextQ() {
+            const q = state.pool[state.idx];
+            const result = state.log[state.log.length-1];
+            const force = document.getElementById('keep-check').checked;
+            
+            updateReviewDB(q, result, force);
+
             state.idx++;
-            if (state.idx < state.pool.length) {
-                renderQuestion();
-                window.scrollTo({ top: 0, behavior: 'smooth' });
-            } else {
-                endSession();
-            }
+            if (state.idx < state.pool.length) renderQ();
+            else end();
         }
 
-        function endSession() {
+        function updateReviewDB(q, isCorr, force) {
+            let db = getDB();
+            let idx = db.findIndex(i => i.question === q.question);
+
+            if (idx === -1) {
+                if (!isCorr || force) db.push({ ...q, streak: (isCorr && !force) ? 1 : 0 });
+            } else {
+                if (force) db[idx].streak = 0;
+                else if (isCorr) {
+                    db[idx].streak = (db[idx].streak || 0) + 1;
+                    if (db[idx].streak >= 2) db.splice(idx, 1);
+                } else {
+                    db[idx].streak = 0;
+                }
+            }
+            setDB(db);
+        }
+
+        function end() {
             clearInterval(state.interval);
-            dom.views.quiz.classList.add('hidden');
-            dom.views.results.classList.remove('hidden');
-            
-            const pct = Math.round((state.score / state.pool.length) * 100);
-            document.getElementById('res-score').innerText = `${pct}%`;
-            document.getElementById('res-time').innerText = document.getElementById('timer').innerText;
-            document.getElementById('res-streak').innerText = state.streak;
-            
-            checkMistakes(); // Update count
+            document.getElementById('view-quiz').classList.add('hidden');
+            document.getElementById('view-results').classList.remove('hidden');
+            document.getElementById('res-score').innerText = `${Math.round((state.score/state.pool.length)*100)}%`;
+            document.getElementById('res-streak').innerText = state.score;
         }
 
-        // --- UTILS ---
-        function updateMistakeDB(q, action) {
-            let db = JSON.parse(localStorage.getItem(state.mistakesKey) || '[]');
-            if (action === 'add') {
-                if (!db.some(i => i.question === q.question)) db.push(q);
-            } else {
-                db = db.filter(i => i.question !== q.question);
-            }
-            localStorage.setItem(state.mistakesKey, JSON.stringify(db));
-        }
-
-        function playTone(type) {
-            const osc = audioCtx.createOscillator();
-            const gain = audioCtx.createGain();
-            osc.connect(gain);
-            gain.connect(audioCtx.destination);
-            
-            const now = audioCtx.currentTime;
-            if (type === 'success') {
-                osc.type = 'sine';
-                osc.frequency.setValueAtTime(600, now);
-                osc.frequency.exponentialRampToValueAtTime(1200, now + 0.1);
-                gain.gain.setValueAtTime(0.1, now);
-                gain.gain.linearRampToValueAtTime(0, now + 0.1);
-                osc.start(now); osc.stop(now + 0.1);
-            } else {
-                osc.type = 'sawtooth';
-                osc.frequency.setValueAtTime(150, now);
-                gain.gain.setValueAtTime(0.1, now);
-                gain.gain.linearRampToValueAtTime(0, now + 0.15);
-                osc.start(now); osc.stop(now + 0.15);
-            }
-        }
-
-        function downloadCSV() {
-            let csv = "Question,Result,Time\n";
-            state.log.forEach(r => csv += `"${r.q.replace(/"/g, '""')}",${r.result ? 'Correct' : 'Incorrect'},${r.time}\n`);
-            const blob = new Blob([csv], { type: 'text/csv' });
-            const url = window.URL.createObjectURL(blob);
-            const a = document.createElement('a');
-            a.href = url;
-            a.download = `study_session_${new Date().toISOString().slice(0,10)}.csv`;
-            a.click();
-        }
-
-        // --- MODAL ---
-        const prompts = {
-            convert: `Convert this list to a JSON array of objects with keys: "question", "options" (4 strings), "answer" (string), "note" (short explanation), and "source". Output ONLY raw JSON.`,
-            create: `Generate [NUMBER] multiple-choice questions about [TOPIC] as a JSON array. Keys: "question", "options", "answer", "note", "source". Output ONLY raw JSON.`
-        };
-
-        function toggleModal(show) {
-            const el = document.getElementById('ai-modal');
-            if (show) {
-                el.classList.remove('hidden');
-                setPromptMode('convert');
-            } else {
-                el.classList.add('hidden');
-            }
-        }
-
-        function setPromptMode(mode) {
-            const btn1 = document.getElementById('tab-convert');
-            const btn2 = document.getElementById('tab-create');
-            
-            if (mode === 'convert') {
-                btn1.className = "flex-1 py-1.5 text-xs font-bold rounded shadow bg-white dark:bg-slate-700 text-slate-800 dark:text-white transition-all";
-                btn2.className = "flex-1 py-1.5 text-xs font-bold rounded text-slate-500 hover:text-slate-700 dark:text-slate-400 transition-all";
-                document.getElementById('prompt-output').value = prompts.convert;
-            } else {
-                btn2.className = "flex-1 py-1.5 text-xs font-bold rounded shadow bg-white dark:bg-slate-700 text-slate-800 dark:text-white transition-all";
-                btn1.className = "flex-1 py-1.5 text-xs font-bold rounded text-slate-500 hover:text-slate-700 dark:text-slate-400 transition-all";
-                document.getElementById('prompt-output').value = prompts.create;
-            }
-        }
-
-        function copyPrompt() {
-            const el = document.getElementById('prompt-output');
-            el.select();
-            navigator.clipboard.writeText(el.value);
-            const btn = document.querySelector('#ai-modal button:last-child');
-            const prev = btn.innerText;
-            btn.innerText = "Copied! ✓";
-            setTimeout(() => btn.innerText = prev, 1500);
-        }
+        // Init
+        updateReviewBtn();
     </script>
 </body>
 </html>
